@@ -15,9 +15,8 @@ public class GestionRisqueApp {
 
     private void prepareGUI() {
         mainFrame = new JFrame("Calcul de Crédit Bancaire");
-        mainFrame.setSize(300, 200);
+        mainFrame.setSize(400, 300);
         mainFrame.setLayout(new GridLayout(4, 2));
-
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JLabel labelAge = new JLabel("Age: ");
@@ -41,42 +40,28 @@ public class GestionRisqueApp {
         mainFrame.add(labelSalary);
         mainFrame.add(textFieldSalary);
         mainFrame.add(calculateButton);
-        mainFrame.add(textAreaCreditInfo);
+        mainFrame.add(new JScrollPane(textAreaCreditInfo));
         mainFrame.setVisible(true);
     }
     
     private void calculateCredit() {
-        int age = Integer.parseInt(textFieldAge.getText());
-        double salary = Double.parseDouble(textFieldSalary.getText());
-        double creditAmount = 0.0;
-
-        if (salary >= 50000 && salary <= 100000) {
-            if (age <= 45) {
-                creditAmount = 1000000; // Crédit minimal
-            }
-        } else if (salary > 100000 && salary <= 200000) {
-            if (age <= 45) {
-                creditAmount = 2000000; // Crédit junior
-            } else if (age > 45 && age <= 55) {
-                creditAmount = 1000000; // Crédit minimal
-            }
-        } else if (salary > 200000 && salary < 300000) {
-            if (age <= 45) {
-                creditAmount = 3000000; // Crédit équilibré
-            } else if (age > 45 && age <= 55) {
-                creditAmount = 2000000; // Crédit junior
-            }
-        } else if (salary >= 300000) {
-            if (age <= 45) {
-                creditAmount = 5000000; // Crédit gold
-            } else if (age > 45 && age <= 55) {
-                creditAmount = 3000000; // Crédit équilibré
-            }
+        try {
+            int age = Integer.parseInt(textFieldAge.getText());
+            double salary = Double.parseDouble(textFieldSalary.getText());
+            Client client = new Client(age, salary);
+            double creditAmount = CreditCalculator.calculateCredit(client);
+            textAreaCreditInfo.setText("Montant de crédit autorisé: " + creditAmount);
+        } catch (NumberFormatException ex) {
+            textAreaCreditInfo.setText("Erreur: Veuillez saisir des valeurs numériques valides pour l'âge et le salaire.");
         }
-        textAreaCreditInfo.setText("Montant de crédit autorisé: " + creditAmount);
     }
 
     public static void main(String[] args) {
-        GestionRisqueApp app = new GestionRisqueApp();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new GestionRisqueApp();
+            }
+        });
     }
 }
