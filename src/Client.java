@@ -1,17 +1,17 @@
 public class Client {
-    private int age;
-    private double salary;
+    private String ageCategory;
+    private String salaryCategory;
 
-    public Client(int age, double salary) {
-        this.age = age;
-        this.salary = salary;
+    public Client(String ageCategory, String salaryCategory) {
+        this.ageCategory = ageCategory;
+        this.salaryCategory = salaryCategory;
     }
 
-    public int getAge() {
-        return age;
+    public String getAgeCategory() {
+        return ageCategory;
     }
 
-    public double getSalary() {
-        return salary;
+    public String getSalaryCategory() {
+        return salaryCategory;
     }
 }

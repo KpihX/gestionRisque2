@@ -5,8 +5,9 @@ import java.awt.event.ActionListener;
 
 public class GestionRisqueApp {
     private JFrame mainFrame;
-    private JTextField textFieldAge;
-    private JTextField textFieldSalary;
+    private JComboBox<String> comboBoxAge;
+    private JComboBox<String> comboBoxSalary;
+    private JTextField textFieldCredit;
     private JTextArea textAreaCreditInfo;
 
     public GestionRisqueApp() {
@@ -14,54 +15,56 @@ public class GestionRisqueApp {
     }
 
     private void prepareGUI() {
-        mainFrame = new JFrame("Calcul de Crédit Bancaire");
+        mainFrame = new JFrame("Gestion des Risques de Crédit");
         mainFrame.setSize(400, 300);
-        mainFrame.setLayout(new GridLayout(4, 2));
+        mainFrame.setLayout(new GridLayout(5, 2));
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JLabel labelAge = new JLabel("Age: ");
-        JLabel labelSalary = new JLabel("Salaire: ");
+        JLabel labelAge = new JLabel("Catégorie d'âge: ");
+        JLabel labelSalary = new JLabel("Catégorie de salaire: ");
+        JLabel labelCredit = new JLabel("Crédit demandé: ");
         
-        textFieldAge = new JTextField();
-        textFieldSalary = new JTextField();
-        JButton calculateButton = new JButton("Calculer Crédit");
+        comboBoxAge = new JComboBox<>(new String[]{"<= 45", "46 - 55"});
+        comboBoxSalary = new JComboBox<>(new String[]{"50,000 - 100,000", "100,001 - 200,000", "200,001 - 300,000", ">= 300,001"});
+        textFieldCredit = new JTextField();
+        
+        JButton evaluateButton = new JButton("Évaluer le Crédit");
         
         textAreaCreditInfo = new JTextArea();
         textAreaCreditInfo.setEditable(false);
 
-        calculateButton.addActionListener(new ActionListener() {
+        evaluateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                calculateCredit();
+                evaluateCredit();
             }
         });
 
         mainFrame.add(labelAge);
-        mainFrame.add(textFieldAge);
+        mainFrame.add(comboBoxAge);
         mainFrame.add(labelSalary);
-        mainFrame.add(textFieldSalary);
-        mainFrame.add(calculateButton);
+        mainFrame.add(comboBoxSalary);
+        mainFrame.add(labelCredit);
+        mainFrame.add(textFieldCredit);
+        mainFrame.add(evaluateButton);
         mainFrame.add(new JScrollPane(textAreaCreditInfo));
         mainFrame.setVisible(true);
     }
-    
-    private void calculateCredit() {
+
+    private void evaluateCredit() {
         try {
-            int age = Integer.parseInt(textFieldAge.getText());
-            double salary = Double.parseDouble(textFieldSalary.getText());
-            Client client = new Client(age, salary);
-            double creditAmount = CreditCalculator.calculateCredit(client);
-            textAreaCreditInfo.setText("Montant de crédit autorisé: " + creditAmount);
+            String ageCategory = (String) comboBoxAge.getSelectedItem();
+            String salaryCategory = (String) comboBoxSalary.getSelectedItem();
+            double requestedCredit = Double.parseDouble(textFieldCredit.getText());
+    
+            Client client = new Client(ageCategory, salaryCategory);
+            String creditEvaluation = CreditCalculator.calculateCredit(client, requestedCredit);
+            textAreaCreditInfo.setText(creditEvaluation);
         } catch (NumberFormatException ex) {
-            textAreaCreditInfo.setText("Erreur: Veuillez saisir des valeurs numériques valides pour l'âge et le salaire.");
+            textAreaCreditInfo.setText("Veuillez entrer un nombre valide pour le crédit demandé.");
         }
     }
-
+    
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new GestionRisqueApp();
-            }
-        });
+        GestionRisqueApp riskApp = new GestionRisqueApp();
     }
 }
